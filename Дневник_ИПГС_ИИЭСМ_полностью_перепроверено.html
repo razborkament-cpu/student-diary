@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#f2f2f7">
+<title>Дневник</title>
+<style>
+:root{--bg:#f2f2f7;--card:#fff;--text:#111;--secondary:#6e6e73;--border:rgba(60,60,67,.12);--accent:#007aff;--accent-soft:rgba(0,122,255,.10);--danger:#ff3b30;--nav:rgba(249,249,249,.94);--shadow:0 2px 12px rgba(0,0,0,.06)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Arial,sans-serif;background:var(--bg);color:var(--text)}
+body{min-height:100vh;padding-bottom:90px}button,input,select{font:inherit}button{border:0;cursor:pointer}.hidden{display:none!important}
+.header{padding:calc(env(safe-area-inset-top) + 12px) 18px 10px}.header-top{display:flex;justify-content:space-between;align-items:center;gap:15px}.app-title{font-size:28px;font-weight:750;letter-spacing:-.7px}.today-label{color:var(--secondary);font-size:14px;margin-top:3px}.header-date{color:var(--accent);font-size:15px;font-weight:650;text-align:right}
+.screen{display:none;padding:0 16px}.screen.active{display:block}#profileScreen{padding-top:calc(env(safe-area-inset-top) + 12px)}
+.week-navigation{display:flex;align-items:center;justify-content:space-between;margin:4px 0 12px;gap:10px}.week-title{font-size:17px;font-weight:700}.week-info{color:var(--secondary);font-size:13px;margin-top:3px}.week-arrows{display:flex;gap:6px}.icon-button{width:36px;height:36px;border-radius:50%;background:var(--card);color:var(--accent);box-shadow:var(--shadow);font-size:21px;display:flex;align-items:center;justify-content:center}
+.week-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:20px}.day{text-align:center;padding:9px 2px;border-radius:13px;background:var(--card);color:var(--text);box-shadow:var(--shadow);transition:.15s}.day-name{font-size:11px;color:var(--secondary);font-weight:600}.day-number{font-size:17px;font-weight:700;margin-top:3px}.day.selected{background:var(--accent);color:#fff}.day.selected .day-name{color:rgba(255,255,255,.82)}.day.today:not(.selected){outline:2px solid var(--accent);outline-offset:-2px}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin:8px 2px 10px}.section-title{font-size:21px;font-weight:750;letter-spacing:-.3px}
+.lessons{display:flex;flex-direction:column;gap:0}.lesson{position:relative;display:flex;background:var(--card);border-radius:18px;padding:15px;margin-bottom:10px;box-shadow:var(--shadow);border:1px solid var(--border);overflow:hidden}.lesson-time{min-width:70px;padding-right:12px;border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:center}.lesson-start{font-size:18px;font-weight:750;letter-spacing:-.3px}.lesson-end{font-size:12px;color:var(--secondary);margin-top:3px}.lesson-info{flex:1;min-width:0;padding-left:14px}.lesson-subject{font-size:17px;font-weight:700;line-height:1.2;margin-bottom:7px}.lesson-meta{display:flex;flex-wrap:wrap;gap:5px}.meta{display:inline-flex;align-items:center;background:rgba(118,118,128,.10);color:var(--secondary);border-radius:7px;padding:4px 7px;font-size:11px}.week-badge{color:var(--accent);background:var(--accent-soft)}.break-between{display:flex;align-items:center;justify-content:center;gap:8px;min-height:31px;margin:-2px 0 2px}.break-between:before,.break-between:after{content:"";height:1px;background:var(--border);flex:1}.break-text{color:var(--secondary);font-size:12px;font-weight:600;white-space:nowrap}.empty{text-align:center;color:var(--secondary);background:var(--card);border-radius:18px;padding:35px 20px;box-shadow:var(--shadow)}
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;height:calc(70px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:var(--nav);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;z-index:30}.nav-item{flex:1;background:transparent;color:var(--secondary);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10px;font-weight:600}.nav-icon{font-size:22px;line-height:1}.nav-item.active{color:var(--accent)}
+.profile-card{background:var(--card);border-radius:20px;padding:20px;box-shadow:var(--shadow);margin-bottom:15px}.profile-avatar{width:64px;height:64px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:25px;font-weight:800;margin-bottom:13px}.profile-name{font-size:21px;font-weight:750}.profile-info{color:var(--secondary);font-size:14px;margin-top:5px}.settings-group{background:var(--card);border-radius:18px;overflow:hidden;margin-bottom:15px;box-shadow:var(--shadow)}.settings-row{min-height:54px;padding:10px 15px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);gap:15px}.settings-row:last-child{border-bottom:0}.settings-label{font-size:16px}.settings-value{color:var(--secondary)}.academic-year-select{border:0;outline:none;background:transparent;color:var(--secondary);font-size:16px;text-align:right;padding:4px 20px 4px 8px;max-width:145px}
+.color-section{padding:15px}.color-title{font-size:16px;margin-bottom:4px}.color-description{color:var(--secondary);font-size:13px;margin-bottom:13px}.color-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.color-button{width:100%;aspect-ratio:1;border-radius:14px;position:relative;border:3px solid transparent;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}.color-button.active{border-color:var(--text)}.color-button.active:after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:white;font-size:20px;font-weight:800;text-shadow:0 1px 3px rgba(0,0,0,.4)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.38);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);z-index:100;display:none;align-items:flex-end}.modal-overlay.active{display:flex}.modal{width:100%;max-height:92vh;overflow-y:auto;background:var(--card);border-radius:24px 24px 0 0;padding:10px 18px calc(20px + env(safe-area-inset-bottom));animation:slideUp .2s ease}.modal-handle{width:38px;height:5px;border-radius:5px;background:#d1d1d6;margin:3px auto 18px}.modal-title{font-size:23px;font-weight:750;margin-bottom:18px}.form-group{margin-bottom:15px}.form-label{display:block;color:var(--secondary);font-size:13px;margin:0 0 6px 4px}.input,.select{width:100%;height:48px;border:1px solid var(--border);border-radius:13px;padding:0 13px;background:var(--bg);color:var(--text);outline:none}.input:focus,.select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}.modal-buttons{display:flex;gap:9px;margin-top:20px}.primary-button,.secondary-button,.danger-button{min-height:48px;border-radius:13px;padding:0 16px;font-weight:650;flex:1}.primary-button{background:var(--accent);color:#fff}.secondary-button{background:var(--bg);color:var(--text)}.danger-button{background:rgba(255,59,48,.1);color:var(--danger)}
+.setup-note{color:var(--secondary);font-size:13px;line-height:1.45;background:var(--bg);border-radius:13px;padding:12px;margin-top:-3px}.profile-edit-row{cursor:pointer}.group-chip{display:inline-flex;margin-top:12px;background:var(--accent-soft);color:var(--accent);padding:7px 10px;border-radius:10px;font-size:13px;font-weight:650}.schedule-source{color:var(--secondary);font-size:12px;margin-top:4px}
+body.dark{--bg:#000;--card:#1c1c1e;--text:#f5f5f7;--secondary:#98989f;--border:rgba(255,255,255,.10);--nav:rgba(28,28,30,.94)}body.dark .input,body.dark .select,body.dark .secondary-button{background:#2c2c2e}body.dark .academic-year-select{background:var(--card);color:var(--secondary)}
+.toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translate(-50%,20px) scale(.96);background:rgba(30,30,30,.9);color:#fff;padding:11px 16px;border-radius:13px;font-size:14px;opacity:0;pointer-events:none;transition:.2s;z-index:200}.toast.show{opacity:1;transform:translate(-50%,0) scale(1)}
+.screen.active{animation:screenAppear .28s cubic-bezier(.22,.8,.25,1)}@keyframes screenAppear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}button{transition:transform .15s ease,opacity .15s ease,background-color .18s ease,color .18s ease,box-shadow .18s ease}button:active{transform:scale(.96)}.lesson{animation:lessonAppear .28s cubic-bezier(.22,.8,.25,1) both}@keyframes lessonAppear{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<section class="screen active" id="homeScreen">
+<header class="header"><div class="header-top"><div><div class="app-title">Дневник</div><div class="today-label" id="headerDate"></div></div><div class="header-date" id="academicWeekHeader"></div></div></header>
+<div class="week-navigation"><div><div class="week-title" id="selectedDateTitle"></div><div class="week-info" id="selectedWeekInfo"></div></div><div class="week-arrows"><button class="icon-button" onclick="changeWeek(-1)">‹</button><button class="icon-button" onclick="changeWeek(1)">›</button></div></div>
+<div class="week-strip" id="weekStrip"></div>
+<div class="section-header"><div class="section-title">Расписание</div><button class="secondary-button" style="flex:0;min-height:34px;padding:0 12px;font-size:12px" onclick="goToday()">Сегодня</button></div>
+<div class="lessons" id="homeLessons"></div>
+</section>
+
+<section class="screen" id="profileScreen">
+<div class="page-title" style="font-size:28px;font-weight:750;letter-spacing:-.6px;margin:0 0 18px">Профиль</div>
+<div class="profile-card"><div class="profile-avatar" id="profileAvatar">?</div><div class="profile-name" id="profileName">Студент</div><div class="profile-info" id="profileInfo">Профиль не заполнен</div><div id="profileGroupChip"></div></div>
+<div class="settings-group">
+<div class="settings-row profile-edit-row" onclick="openProfileModal()"><div class="settings-label">Изменить профиль</div><div class="settings-value">›</div></div>
+<div class="settings-row"><div class="settings-label">Тёмная тема</div><input type="checkbox" id="darkToggle" onchange="toggleDarkMode(this.checked)"></div>
+<div class="settings-row"><div class="settings-label">Учебный год</div><select class="academic-year-select" id="academicYearSelect" onchange="changeAcademicYear(this.value)"></select></div>
+</div>
+<div class="settings-group"><div class="color-section"><div class="color-title">Цвет интерфейса</div><div class="color-description">Выберите основной цвет приложения</div><div class="color-grid" id="colorGrid"></div></div></div>
+<div class="settings-group"><div class="settings-row profile-edit-row" onclick="resetProfile()"><div class="settings-label" style="color:var(--danger)">Сбросить профиль</div><div class="settings-value">›</div></div></div>
+</section>
+
+<nav class="bottom-nav"><button class="nav-item active" onclick="showScreen('homeScreen',this)"><span class="nav-icon">⌂</span><span>Главная</span></button><button class="nav-item" onclick="showScreen('profileScreen',this)"><span class="nav-icon">⚙</span><span>Профиль</span></button></nav>
+
+<div class="modal-overlay" id="profileModal" onclick="closeModalOutside(event,'profileModal')"><div class="modal"><div class="modal-handle"></div><div class="modal-title">Профиль</div>
+<div class="form-group"><label class="form-label">Имя</label><input class="input" id="profileNameInput" placeholder="Ваше имя"></div>
+<div class="form-group"><label class="form-label">Институт</label><select class="select" id="profileFacultyInput" onchange="updateGroupOptions()"></select></div>
+<div class="form-group"><label class="form-label">Группа</label><select class="select" id="profileGroupInput"></select></div>
+<div class="setup-note">Расписание не заполняется вручную. После выбора института и группы приложение автоматически использует встроенное расписание.</div>
+<div class="modal-buttons"><button class="secondary-button" onclick="closeModal('profileModal')">Отмена</button><button class="primary-button" onclick="saveProfile()">Сохранить</button></div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const STORAGE_PROFILE="student_diary_profile_v8";
+const STORAGE_THEME="student_diary_theme_v8";
+const STORAGE_ACCENT="student_diary_accent_v8";
+const STORAGE_ACADEMIC_YEAR="student_diary_academic_year_v2";
+const DAYS=["Понедельник","Вторник","Среда","Четверг","Пятница","Суббота","Воскресенье"];
+const SHORT_DAYS=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
+const TIMES={1:["08:30","09:50"],2:["10:00","11:20"],3:["11:30","12:50"],4:["13:00","14:20"],5:["14:30","15:50"],6:["16:00","17:20"]};
+const ACCENT_COLORS=["#007aff","#5856d6","#af52de","#ff2d55","#ff3b30","#ff9500","#ffcc00","#34c759","#00c7be","#30b0c7"];
+const GROUPS={
+  "ИПГС":["50","51","80","81"],
+  "ИИЭСМ":["20","21","22"]
+};
+
+// Встроенное расписание. Если в одной временной ячейке две пары,
+// верхняя относится к нечётным неделям, нижняя - к чётным.
+// Подгруппы игнорируются, как и было согласовано.
+const BUILTIN_SCHEDULE={
+  "ИПГС":{
+    "50":{
+      0:[L("Основы российской государственности","ст.пр.ВАК (Цишба) Э.В.","519 / КМК",1,7,"odd"),L("Иностранный язык, Английский","пр.Рябова Н.М.","702 / КМК",2),L("Математика","пр.ВАК (Шепелев) А.С.","501 / КМК",3),L("Экономическая теория","ст.пр.ВАК (Козлова) О.А.","108 / КПА",5)],
+      1:[L("Экономическая теория","пр.ВАК (Незаметдинов) И.М.","531 / КМК",1),L("Информационные технологии","пр.ВАК (Макарова) Е.А.","310 / КМК",2),L("Правоведение. Противодействие коррупции","доц.Капусткина А.В.","109 / КПА",3,3,"odd"),L("Основы строительных материалов","доц.Жуков А.Д.","630 / КМК",3,1,"even"),L("Правоведение. Противодействие коррупции","доц.Капусткина А.В.","523 / КМК",4),L("Основы российской государственности","ст.пр.ВАК (Цишба) Э.В.","530 / КМК",5,6)],
+      2:[L("Математика","доц.ВАК (Кондрашова) Е.В.","630 / КМК",1),L("Экономическая теория","пр.ВАК (Незаметдинов) И.М.","520 / КМК",2,1,"odd"),L("Правоведение. Противодействие коррупции","доц.Капусткина А.В.","109 / КПА",2,1,"even"),L("Иностранный язык, Английский","пр.Рябова Н.М.","702 / КМК",3),L("Физическая культура и спорт (элективная дисциплина)","","СОК",5)],
+      3:[L("Математика","пр.ВАК (Шепелев) А.С.","522 / КМК",2),L("Теория менеджмента","доц.Сергиевская Н.В.","721 / КМК",4,1,"odd"),L("Иностранный язык, Английский","пр.Рябова Н.М.","702 / КМК",4,1,"even"),L("Основы строительных материалов","доц.Жуков А.Д.","721 / КМК",5,1,"odd"),L("Теория менеджмента","доц.Сергиевская Н.В.","630 / КМК",5,1,"even"),L("История России","пр.ВАК (Гацунаев) К.Н.","101 / КПА",6)],
+      4:[L("Основы российской государственности","доц.ВАК (Барсукова) А.Д.","109 / КПА",2),L("История России","пр.ВАК (Гацунаев) К.Н.","622 / КМК",2,1,"specific",[4,8,12,16]),L("Основы строительных материалов","ст.пр.ВАК (Сизяков) И.Д.","124 / КМК",3,1,"odd"),L("Основы российской государственности","доц.ВАК (Барсукова) А.Д.","101 / КПА",3,1,"even"),L("Информационные технологии","доц.Широкова О.Л.","109 / КПА",4,1,"specific",[3,5,7,9]),L("Экономическая теория","ст.пр.ВАК (Козлова) О.А.","106 / КПА",5),L("Теория менеджмента","пр.Верстин Н.А.","529 / КМК",6)]
+    },
+    "51":{
+      0:[L("Основы российской государственности","ст.пр.ВАК (Цишба) Э.В.","519 / КМК",2,7),L("Иностранный язык, Английский","пр.Рябова Н.М.","702 / КМК",3),L("Иностранный язык, Английский","пр.Рябова Н.М.","702 / КМК",4),L("Экономическая теория","ст.пр.ВАК (Козлова) О.А.","108 / КПА",5,1,"odd"),L("Информационные технологии","пр.ВАК (Макарова) Е.А.","310 / КМК",5,1,"even")],
+      1:[L("Математика","доц.ВАК (Кондрашова) Е.В.","501 / КМК",1),L("Правоведение. Противодействие коррупции","доц.Капусткина А.В.","109 / КПА",3,3),L("Основы строительных материалов","доц.Жуков А.Д.","630 / КМК",3,1,"even"),L("Иностранный язык, Английский","пр.Рябова Н.М.","702 / КМК",4,1,"odd"),L("Основы российской государственности","ст.пр.ВАК (Цишба) Э.В.","530 / КМК",4,6,"even"),L("Правоведение. Противодействие коррупции","доц.Капустина А.В.","523 / КМК",5,1,"odd"),L("История России","пр.Отто Ф.П.","622 / КМК",5,1,"even")],
+      2:[L("Математика","доц.ВАК (Кондрашова) Е.В.","516 / КМК",1),L("Основы строительных материалов","ст.пр.ВАК (Сизяков) И.Д.","124 / КМК",2,1,"odd"),L("Правоведение. Противодействие коррупции","доц.Капусткина А.В.","109 / КПА",2,1,"even"),L("Экономическая теория","пр.ВАК (Незаметдинов) И.М.","520 / КМК",3,1,"odd"),L("Экономическая теория","пр.ВАК (Незаметдинов) И.М.","523 / КМК",3,1,"even"),L("Иностранный язык, Английский","пр.Рябова Н.М.","702 / КМК",4),L("Физическая культура и спорт (элективная дисциплина)","","СОК",5)],
+      3:[L("Иностранный язык, Английский","пр.Рябова Н.М.","702 / КМК",3),L("Теория менеджмента","доц.Сергиевская Н.В.","721 / КМК",4),L("Основы строительных материалов","доц.Жуков А.Д.","721 / КМК",5,1,"odd"),L("Теория менеджмента","доц.Сергиевская Н.В.","630 / КМК",5,1,"even"),L("История России","пр.ВАК (Гацунаев) К.Н.","101 / КПА",6)],
+      4:[L("Основы российской государственности","доц.ВАК (Барсукова) А.Д.","109 / КПА",2),L("Математика","доц.ВАК (Кондрашова) Е.В.","501 / КМК",3,1,"odd"),L("Основы российской государственности","доц.ВАК (Барсукова) А.Д.","101 / КПА",3,1,"even"),L("Информационные технологии","доц.Широкова О.Л.","109 / КПА",4,1,"specific",[3,5,7,9]),L("Теория менеджмента","пр.Верстин Н.А.","633а / КМК",4,1,"even"),L("Экономическая теория","ст.пр.ВАК (Козлова) О.А.","106 / КПА",5)]
+    },
+    "80":{
+      0:[L("Иностранный язык, Английский","доц.Швецова О.А.","702 / КМК",1),L("Инженерная и компьютерная графика","ст.пр.Царев А.И.","538 / КМК",2,1,"odd"),L("Физика","пр.ВАК-ОПФ-преп1","442 / КМК",2,1,"even"),L("Инженерная и компьютерная графика","ст.пр.Царев А.И.","538 / КМК",3,1,"odd"),L("Высшая математика","пр.ВАК (Шепелев) А.С.","529 / КМК",3,1,"even"),L("Инженерная геодезия","пр.Тодорова А.Й.","332 / КМК",4)],
+      1:[L("Химия","доц.Степина И.В.","737 / КМК",4,1,"odd"),L("Основы российской государственности","ст.пр.ВАК (Кирдань) И.А.","622 / КМК",4,1,"specific",[2,6,10,14]),L("История России","ст.пр.ВАК (Кирдань) И.А.","622 / КМК",4,1,"specific",[4,8,12,16]),L("Основы российской государственности","доц.Солодухин Д.В.","101 / КПА",5,2),L("Химия","доц.Степина И.В.","101 / КПА",6,3)],
+      2:[L("Высшая математика","пр.ВАК (Шепелев) А.С.","502 / КМК",1),L("Физика","пр.ВАК-ОПФ-преп1","443 / КМК",2,1,"odd"),L("Иностранный язык, Английский","доц.Швецова О.А.","702 / КМК",2,1,"even"),L("Инженерная геодезия","доц.Шендяпина С.В.","101 / КПА",3,1,"odd"),L("Физика","доц.Гаврилин С.Н.","203 Б / УЛБ",3,1,"even"),L("Физическая культура и спорт (элективная дисциплина)","","СОК",5)],
+      3:[L("Высшая математика","пр.ВАК (Шепелев) А.С.","522 / КМК",3),L("Инженерная и компьютерная графика","ст.пр.Царев А.И.","532 / КМК",4),L("Физика","пр.ВАК-ОПФ-преп1","442 / КМК",5)],
+      4:[L("Высшая математика","доц.ВАК (Иванова) Е.П.","203 Б / УЛБ",2),L("История России","доц.ВАК (Шевельков) А.И.","103 / КПА",3,1,"odd"),L("Высшая математика","доц.ВАК (Иванова) Е.П.","203 Б / УЛБ",3,1,"even"),L("История России","доц.ВАК (Шевельков) А.И.","109 / КПА",4),L("Иностранный язык, Английский","доц.Швецова О.А.","702 / КМК",5),L("Основы российской государственности","ст.пр.ВАК (Кирдань) И.А.","519 / КМК",6,3)]
+    },
+    "81":{
+      0:[L("Иностранный язык, Английский","доц.Швецова О.А.","702 / КМК",1),L("Инженерная и компьютерная графика","ст.пр.Царев А.И.","538 / КМК",2,1,"odd"),L("Физика","пр.ВАК-ОПФ-преп1","442 / КМК",2,1,"even"),L("Инженерная геодезия","пр.Тодорова А.Й.","332 / КМК",3,1,"odd"),L("Инженерная и компьютерная графика","ст.пр.Царев А.И.","213 / УЛК",3,1,"even"),L("Высшая математика","пр.ВАК (Шепелев) А.С.","501 / КМК",4,1,"odd"),L("Иностранный язык, Английский","доц.Якимова О.А.","702 / КМК",4,1,"even"),L("Иностранный язык, Английский","доц.Якимова О.А.","702 / КМК",6)],
+      1:[L("Основы российской государственности","ст.пр.ВАК (Кирдань) И.А.","519 / КМК",3,1,"specific",[2,6,10,14]),L("История России","ст.пр.ВАК (Кирдань) И.А.","519 / КМК",3,1,"specific",[4,8,12,16]),L("Физика","пр.ВАК-ОПФ-преп1","442 / КМК",4,1,"odd"),L("Химия","пр.Тоболев П.Д.","738 / КМК",4,1,"even"),L("Основы российской государственности","доц.Солодухин Д.В.","101 / КПА",5,2),L("Химия","доц.Степина И.В.","101 / КПА",6,3)],
+      2:[L("Высшая математика","пр.ВАК (Шепелев) А.С.","502 / КМК",2),L("Инженерная геодезия","доц.Шендяпина С.В.","101 / КПА",3,1,"odd"),L("Физика","доц.Гаврилин С.Н.","203 Б / УЛБ",3,1,"even"),L("Физическая культура и спорт (элективная дисциплина)","","СОК",5)],
+      3:[L("Физика","пр.ВАК-ОПФ-преп1","443 / КМК",4),L("Инженерная и компьютерная графика","ст.пр.Царев А.И.","636 / КМК",5),L("Иностранный язык, Английский","доц.Якимова О.А.","702 / КМК",6)],
+      4:[L("Высшая математика","доц.ВАК (Иванова) Е.П.","203 Б / УЛБ",2),L("История России","доц.ВАК (Шевельков) А.И.","103 / КПА",3,1,"odd"),L("Высшая математика","доц.ВАК (Иванова) Е.П.","203 Б / УЛБ",3,1,"even"),L("История России","доц.ВАК (Шевельков) А.И.","109 / КПА",4),L("Основы российской государственности","ст.пр.ВАК (Кирдань) И.А.","519 / КМК",5,3),L("Иностранный язык, Английский","доц.Якимова О.А.","702 / КМК",6,1,"odd"),L("Высшая математика","пр.ВАК (Шепелев) А.С.","502 / КМК",6,1,"even")]
+    }
+  },
+  "ИИЭСМ":{
+    "20":{
+      0:[L("Основы российской государственности","пр.Вак. (Бакланова) О.А.","109 / КПА",1,1,"even"),L("Инженерная и компьютерная графика","ст.пр.Ваванов Д.А.","532 / КМК",2,1,"odd"),L("Физика","доц.Гаврилин С.Н.","443 / КМК",2,1,"even"),L("Инженерная геодезия","доц.Арутюнян Н.В.","334 / КМК",3,1,"odd"),L("Иностранный язык, Английский","доц.Швецова О.А.","702 / КМК",3,1,"even"),L("Физика","доц.Гаврилин С.Н.","442 / КМК",4,1,"odd")],
+      1:[L("Физическая культура и спорт (элективная дисциплина)","","СОК",3),L("Высшая математика","доц.Вак. (Рустанов) А.Р.","109 / КПА",5,1,"odd"),L("Инженерная геодезия","доц.Арутюнян Н.В.","103 / КПА",5,1,"even"),L("Физика","доц.Гаврилин С.Н.","107 / КПА",6,1,"odd"),L("История России","пр.Отто Ф.П.","524 / КМК",6,1,"specific",[2,6,10,14])],
+      2:[L("Основы российской государственности","пр.Вак. (Бакланова) О.А.","109 / КПА",3,1,"odd"),L("Иностранный язык, Английский","доц.Швецова О.А.","702 / КМК",3,1,"even"),L("История России","пр.Прядко И.П.","109 / КПА",4,1,"even"),L("Высшая математика","доц.Вак. (Рустанов) А.Р.","501 / КМК",5,1,"odd"),L("Основы российской государственности","пр.Прядко И.П.","521 / КМК",5,6,"even"),L("Высшая математика","доц.Вак. (Рустанов) А.Р.","501 / КМК",6,1,"odd")],
+      3:[L("Основы российской государственности","пр.Прядко И.П.","522 / КМК",3,7,"odd"),L("КОП Инженерная и компьютерная графика","ст.пр.Ваванов Д.А.","533 / КМК",3,1,"even"),L("Иностранный язык, Английский","доц.Швецова О.А.","702 / КМК",4,1,"odd"),L("Высшая математика","доц.Вак. (Рустанов) А.Р.","501 / КМК",4,1,"even"),L("КОП Инженерная и компьютерная графика","ст.пр.Ваванов Д.А.","421 / КМК",5,1,"odd"),L("Высшая математика","доц.Вак. (Рустанов) А.Р.","109 / КПА",5,1,"even")],
+      4:[L("История России","пр.Прядко И.П.","101 / КПА",1,1,"odd"),L("Иностранный язык, Английский","доц.Швецова О.А.","702 / КМК",2,1,"odd"),L("Физика","доц.Гаврилин С.Н.","442 / КМК",2,1,"even"),L("Химия","пр.Тоболев П.Д.","739 / КМК",3,1,"odd"),L("Химия","доц.Алпацкий Д.Г.","107 / КПА",3,1,"even"),L("Химия","пр.Тоболев П.Д.","739 / КМК",4,1,"even")],
+      5:[]
+    },
+    "21":{
+      0:[L("Физика","доц.Гаврилин С.Н.","442 / КМК",1,1,"odd"),L("Основы российской государственности","пр.Вак. (Бакланова) О.А.","109 / КПА",1,1,"even"),L("Иностранный язык, Английский","ст.пр.Германович Т.В.","702 / КМК",2,1,"even"),L("Инженерная и компьютерная графика","ст.пр.Ваванов Д.А.","532 / КМК",3,1,"odd"),L("Основы российской государственности","пр.Прядко И.П.","524 / КМК",3,6,"even"),L("КОП Инженерная и компьютерная графика","ст.пр.Ваванов Д.А.","538 / КМК",4,1,"odd"),L("Химия","доц.Алпацкий Д.Г.","740 / КМК",5,1,"odd")],
+      1:[L("Физическая культура и спорт (элективная дисциплина)","","СОК",3),L("Высшая математика","доц.Вак. (Рустанов) А.Р.","109 / КПА",5,1,"odd"),L("Инженерная геодезия","доц.Арутюнян Н.В.","103 / КПА",5,1,"even"),L("Физика","доц.Гаврилин С.Н.","107 / КПА",6,1,"odd"),L("Высшая математика","доц.Вак. (Рустанов) А.Р.","526 / КМК",6,1,"even")],
+      2:[L("Основы российской государственности","пр.Вак. (Бакланова) О.А.","109 / КПА",3,1,"odd"),L("История России","пр.Прядко И.П.","109 / КПА",4,1,"even"),L("Иностранный язык, Английский","ст.пр.Германович Т.В.","702 / КМК",5,1,"odd"),L("Высшая математика","доц.Вак. (Рустанов) А.Р.","529 / КМК",5,1,"even"),L("Инженерная геодезия","доц.Арутюнян Н.В.","334 / КМК",6,1,"odd"),L("КОП Инженерная и компьютерная графика","ст.пр.Ваванов Д.А.","533 / КМК",6,1,"even")],
+      3:[L("Физика","доц.Гаврилин С.Н.","443 / КМК",2,1,"odd"),L("Высшая математика","доц.Вак. (Рустанов) А.Р.","502 / КМК",3,1,"odd"),L("История России","пр.Вак. (Гацунаев) К.Н.","526 / КМК",3,1,"specific",[4,8,12,16]),L("Иностранный язык, Английский","ст.пр.Германович Т.В.","702 / КМК",4,1,"even"),L("Высшая математика","доц.Вак. (Рустанов) А.Р.","109 / КПА",5,1,"even")],
+      4:[L("История России","пр.Прядко И.П.","101 / КПА",1,1,"odd"),L("Иностранный язык, Английский","ст.пр.Германович Т.В.","702 / КМК",2,1,"odd"),L("Химия","доц.Алпацкий Д.Г.","737 / КМК",2,1,"even"),L("Основы российской государственности","пр.Прядко И.П.","526 / КМК",3,7,"odd"),L("Химия","доц.Алпацкий Д.Г.","107 / КПА",3,1,"even"),L("Физика","доц.Гаврилин С.Н.","442 / КМК",4,1,"even")],
+      5:[]
+    },
+    "22":{
+      0:[L("Высшая математика","пр.Работнов М.В.","502 / КМК",1,1,"odd"),L("Основы российской государственности","пр.Вак. (Бакланова) О.А.","109 / КПА",1,1,"even"),L("Иностранный язык, Английский","пр.Вак.-ИЯиРКИ-преп2","702 / КМК",2,1,"odd"),L("Высшая математика","пр.Работнов М.В.","502 / КМК",2,1,"even"),L("Физика","доц.Гаврилин С.Н.","442 / КМК",3,1,"odd"),L("Иностранный язык, Английский","пр.Вак.-ИЯиРКИ-преп2","702 / КМК",3,1,"even"),L("Основы российской государственности","доц.Вак.-СГНТ-доц2","519 / КМК",5,6,"even")],
+      1:[L("Физическая культура и спорт (элективная дисциплина)","","СОК",3),L("Высшая математика","доц.Вак. (Рустанов) А.Р.","109 / КПА",5,1,"odd"),L("Инженерная геодезия","доц.Арутюнян Н.В.","103 / КПА",5,1,"even"),L("Физика","доц.Гаврилин С.Н.","107 / КПА",6,1,"odd"),L("История России","пр.Отто Ф.П.","524 / КМК",6,1,"specific",[4,8,12,16])],
+      2:[L("КОП Инженерная и компьютерная графика","ст.пр.Ваванов Д.А.","533 / КМК",2,1,"odd"),L("Основы российской государственности","пр.Вак. (Бакланова) О.А.","109 / КПА",3,1,"odd"),L("Химия","доц.Алпацкий Д.Г.","740 / КМК",4,1,"odd"),L("История России","пр.Прядко И.П.","109 / КПА",4,1,"even"),L("Инженерная и компьютерная графика","ст.пр.Ваванов Д.А.","636 / КМК",5,1,"even"),L("Физика","доц.Гаврилин С.Н.","442 / КМК",6,1,"even")],
+      3:[L("Основы российской государственности","доц.Вак.-СГНТ-доц2","529 / КМК",1,7,"odd"),L("Физика","доц.Гаврилин С.Н.","443 / КМК",3,1,"odd"),L("Инженерная геодезия","пр.Вак. (Константинова) Т.А.","332 / КМК",4,1,"odd"),L("КОП Инженерная и компьютерная графика","ст.пр.Ваванов Д.А.","533 / КМК",4,1,"even"),L("Высшая математика","пр.Работнов М.В.","425 / КМК",5,1,"odd"),L("Высшая математика","доц.Вак. (Рустанов) А.Р.","109 / КПА",5,1,"even"),L("Химия","доц.Алпацкий Д.Г.","737 / КМК",6,1,"even")],
+      4:[L("История России","пр.Прядко И.П.","101 / КПА",1,1,"odd"),L("Иностранный язык, Английский","пр.Вак.-ИЯиРКИ-преп2","702 / КМК",2,1,"odd"),L("Химия","доц.Алпацкий Д.Г.","107 / КПА",3,1,"even"),L("Иностранный язык, Английский","пр.Вак.-ИЯиРКИ-преп2","702 / КМК",4,1,"even")],
+      5:[]
+    }
+  }
+
+};
+function L(subject,teacher,room,period,fromWeek=1,week="all",weeks=[]){
+if(typeof fromWeek==="string" && ["all","odd","even","specific"].includes(fromWeek)){weeks=week;week=fromWeek;fromWeek=1}
+return {id:Math.random().toString(36).slice(2),subject,teacher,room,period,fromWeek:Number(fromWeek)||1,week,weeks:Array.isArray(weeks)?weeks:[]}
+}
+
+let profile=loadProfile();
+let selectedDate=dateOnly(new Date());
+let selectedAcademicYear=loadAcademicYear();
+let toastTimer=null;
+
+function dateOnly(date){const d=new Date(date);d.setHours(0,0,0,0);return d}
+function weekdayIndex(date){const d=new Date(date).getDay();return d===0?6:d-1}
+function formatDate(date){return new Date(date).toLocaleDateString("ru-RU",{day:"numeric",month:"long"})}
+function formatFullDate(date){return new Date(date).toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"})}
+function getFirstAcademicWeekStart(year){const d=new Date(year,8,1);d.setHours(0,0,0,0);const shift=d.getDay()===0?6:d.getDay()-1;d.setDate(d.getDate()-shift);return d}
+function getAcademicYear(date){const d=dateOnly(date), y=d.getFullYear(), start=getFirstAcademicWeekStart(y);return d>=start?{startYear:y,endYear:y+1}:{startYear:y-1,endYear:y}}
+function getAcademicWeek(date){const d=dateOnly(date), ay=getAcademicYear(d), start=getFirstAcademicWeekStart(ay.startYear);return Math.floor((d-start)/86400000/7)+1}
+function getWeekParity(date){return getAcademicWeek(date)%2===0?"even":"odd"}
+function formatAcademicYear(y){return `${y}/${y+1}`}
+function loadAcademicYear(){const n=Number(localStorage.getItem(STORAGE_ACADEMIC_YEAR));return Number.isInteger(n)&&n>=2000&&n<=2100?n:getAcademicYear(new Date()).startYear}
+function saveAcademicYear(){localStorage.setItem(STORAGE_ACADEMIC_YEAR,String(selectedAcademicYear))}
+function loadProfile(){try{const p=JSON.parse(localStorage.getItem(STORAGE_PROFILE));if(p)return{name:p.name||"",faculty:p.faculty||"",group:p.group||""}}catch(e){}return{name:"",faculty:"",group:""}}
+function saveProfileData(){localStorage.setItem(STORAGE_PROFILE,JSON.stringify(profile))}
+function getCurrentGroup(){return profile.faculty&&profile.group&&BUILTIN_SCHEDULE[profile.faculty]?.[profile.group]?BUILTIN_SCHEDULE[profile.faculty][profile.group]:null}
+function escapeHtml(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
+function timeToMinutes(t){if(!t)return null;const [h,m]=t.split(":").map(Number);return Number.isFinite(h)&&Number.isFinite(m)?h*60+m:null}
+function lessonMatchesDate(lesson,date){const week=getAcademicWeek(date);if(week<lesson.fromWeek)return false;if(lesson.week==="odd")return week%2===1;if(lesson.week==="even")return week%2===0;if(lesson.week==="specific")return lesson.weeks.includes(week);return true}
+function normalizeLessons(lessons){return (lessons||[]).filter(x=>lessonMatchesDate(x,selectedDate)).sort((a,b)=>a.period-b.period)}
+function weekLabel(lesson){if(lesson.week==="odd")return "Нечётные недели";if(lesson.week==="even")return "Чётные недели";if(lesson.week==="specific")return "Недели: "+lesson.weeks.join(", ");return "Каждую неделю"}
+function renderLesson(lesson){const t=TIMES[lesson.period]||["",""], meta=[];if(lesson.room)meta.push(`<span class="meta">Ауд. ${escapeHtml(lesson.room)}</span>`);if(lesson.teacher)meta.push(`<span class="meta">${escapeHtml(lesson.teacher)}</span>`);if(lesson.week!=="all"||lesson.fromWeek>1)meta.push(`<span class="meta week-badge">${escapeHtml(weekLabel(lesson))}${lesson.fromWeek>1?` · с ${lesson.fromWeek}-й`:""}</span>`);return `<div class="lesson"><div class="lesson-time"><div class="lesson-start">${t[0]}</div><div class="lesson-end">${t[1]}</div></div><div class="lesson-info"><div class="lesson-subject">${escapeHtml(lesson.subject)}</div><div class="lesson-meta">${meta.join("")}</div></div></div>`}
+function getBreakMinutes(a,b){const e=timeToMinutes((TIMES[a.period]||[])[1]),s=timeToMinutes((TIMES[b.period]||[])[0]);if(e==null||s==null||s<=e)return null;return s-e}
+function formatBreak(n){if(n===1)return"1 минута";if(n>=2&&n<=4)return`${n} минуты`;return`${n} минут`}
+function renderLessonsWithBreaks(lessons){if(!lessons.length)return`<div class="empty">${profile.group?"На этот день занятий нет":"Сначала выберите институт и группу в профиле"}</div>`;let html="";lessons.forEach((l,i)=>{if(i){const br=getBreakMinutes(lessons[i-1],l);if(br!==null)html+=`<div class="break-between"><span class="break-text">Перерыв ${formatBreak(br)}</span></div>`}html+=renderLesson(l)});return html}
+function renderHome(){const today=dateOnly(new Date());document.getElementById("headerDate").textContent=formatDate(today);const week=getAcademicWeek(selectedDate);document.getElementById("academicWeekHeader").textContent=`${formatAcademicYear(getAcademicYear(selectedDate).startYear)} · Неделя ${week}`;document.getElementById("selectedDateTitle").textContent=formatFullDate(selectedDate);document.getElementById("selectedWeekInfo").textContent=`${week}-я учебная неделя · ${getWeekParity(selectedDate)==="even"?"чётная":"нечётная"}`;renderWeekStrip();const group=getCurrentGroup();const lessons=group?normalizeLessons(group[weekdayIndex(selectedDate)]||[]):[];document.getElementById("homeLessons").innerHTML=renderLessonsWithBreaks(lessons)}
+function renderWeekStrip(){const monday=new Date(selectedDate);monday.setDate(monday.getDate()-weekdayIndex(monday));let html="";for(let i=0;i<7;i++){const d=new Date(monday);d.setDate(monday.getDate()+i);const selected=d.getTime()===selectedDate.getTime(),today=d.getTime()===dateOnly(new Date()).getTime();html+=`<button class="day ${selected?"selected":""} ${today?"today":""}" onclick="selectDate(${d.getTime()})"><div class="day-name">${SHORT_DAYS[i]}</div><div class="day-number">${d.getDate()}</div></button>`}document.getElementById("weekStrip").innerHTML=html}
+function selectDate(ts){selectedDate=dateOnly(new Date(ts));renderHome()}
+function changeWeek(dir){selectedDate.setDate(selectedDate.getDate()+dir*7);renderHome()}
+function goToday(){selectedDate=dateOnly(new Date());selectedAcademicYear=getAcademicYear(selectedDate).startYear;saveAcademicYear();renderAcademicYearSelect();renderHome()}
+function renderProfile(){const name=profile.name.trim()||"Студент";document.getElementById("profileName").textContent=name;document.getElementById("profileAvatar").textContent=name.charAt(0).toUpperCase();const faculty=profile.faculty||"";const group=profile.group||"";document.getElementById("profileInfo").textContent=faculty&&group?`${faculty} · 1 курс`:faculty||"Профиль не заполнен";document.getElementById("profileGroupChip").innerHTML=faculty&&group?`<div class="group-chip">${escapeHtml(faculty)} 1-${escapeHtml(group)}</div><div class="schedule-source">Расписание встроено в приложение</div>`:"";renderAcademicYearSelect()}
+function fillInstituteOptions(){const s=document.getElementById("profileFacultyInput");s.innerHTML=Object.keys(GROUPS).map(f=>`<option value="${escapeHtml(f)}">${escapeHtml(f)}</option>`).join("")}
+function updateGroupOptions(){const faculty=document.getElementById("profileFacultyInput").value;const s=document.getElementById("profileGroupInput"), old=s.value;s.innerHTML=(GROUPS[faculty]||[]).map(g=>`<option value="${g}">${faculty} 1-${g}</option>`).join("");if((GROUPS[faculty]||[]).includes(old))s.value=old}
+function openProfileModal(){fillInstituteOptions();document.getElementById("profileFacultyInput").value=profile.faculty||Object.keys(GROUPS)[0];updateGroupOptions();document.getElementById("profileGroupInput").value=profile.group||GROUPS[document.getElementById("profileFacultyInput").value][0];document.getElementById("profileNameInput").value=profile.name||"";document.getElementById("profileModal").classList.add("active")}
+function saveProfile(){const faculty=document.getElementById("profileFacultyInput").value,group=document.getElementById("profileGroupInput").value;if(!faculty||!group||!BUILTIN_SCHEDULE[faculty]?.[group]){alert("Выберите институт и группу.");return}profile={name:document.getElementById("profileNameInput").value.trim(),faculty,group};saveProfileData();closeModal("profileModal");renderProfile();renderHome();showToast(`Группа ${faculty} 1-${group} выбрана`)}
+function resetProfile(){if(!confirm("Сбросить выбранную группу и профиль?"))return;profile={name:"",faculty:"",group:""};saveProfileData();renderProfile();renderHome();showToast("Профиль сброшен")}
+function showScreen(id,button){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll(".nav-item").forEach(x=>x.classList.remove("active"));if(button)button.classList.add("active");if(id==="homeScreen")renderHome();if(id==="profileScreen"){renderProfile();renderColorPicker()}}
+function closeModal(id){document.getElementById(id).classList.remove("active")}
+function closeModalOutside(e,id){if(e.target.id===id)closeModal(id)}
+function renderAcademicYearSelect(){const s=document.getElementById("academicYearSelect");if(!s)return;const cur=getAcademicYear(new Date()).startYear;s.innerHTML="";for(let y=cur-2;y<=cur+2;y++){const o=document.createElement("option");o.value=y;o.textContent=formatAcademicYear(y);if(y===selectedAcademicYear)o.selected=true;s.appendChild(o)}}
+function changeAcademicYear(v){const y=Number(v);if(!Number.isInteger(y)||y<2000||y>2100)return;selectedAcademicYear=y;saveAcademicYear();selectedDate=getFirstAcademicWeekStart(y);renderHome();showToast(`Учебный год ${formatAcademicYear(y)}`)}
+function toggleDarkMode(enabled){document.body.classList.toggle("dark",enabled);localStorage.setItem(STORAGE_THEME,enabled?"dark":"light")}
+function loadTheme(){const dark=localStorage.getItem(STORAGE_THEME)==="dark";document.body.classList.toggle("dark",dark);document.getElementById("darkToggle").checked=dark}
+function hexToRgb(hex){const v=hex.replace("#","");if(v.length!==6)return null;return{r:parseInt(v.slice(0,2),16),g:parseInt(v.slice(2,4),16),b:parseInt(v.slice(4,6),16)}}
+function applyAccentColor(color,save=true){document.documentElement.style.setProperty("--accent",color);const rgb=hexToRgb(color);if(rgb)document.documentElement.style.setProperty("--accent-soft",`rgba(${rgb.r},${rgb.g},${rgb.b},.10)`);if(save)localStorage.setItem(STORAGE_ACCENT,color);renderColorPicker()}
+function loadAccentColor(){const c=localStorage.getItem(STORAGE_ACCENT);applyAccentColor(c&&/^#[0-9a-f]{6}$/i.test(c)?c:"#007aff",false)}
+function renderColorPicker(){const c=document.getElementById("colorGrid");if(!c)return;const cur=getComputedStyle(document.documentElement).getPropertyValue("--accent").trim().toLowerCase();c.innerHTML=ACCENT_COLORS.map(x=>`<button class="color-button ${x.toLowerCase()===cur?"active":""}" style="background:${x}" onclick="applyAccentColor('${x}')" aria-label="Выбрать цвет"></button>`).join("")}
+function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),1800)}
+function init(){loadTheme();loadAccentColor();renderProfile();renderColorPicker();renderHome();if(!profile.faculty||!profile.group)setTimeout(openProfileModal,250)}
+init();
+</script>
+</body>
+</html>
